@@ -66,11 +66,11 @@ public class Song {
     	{ 
 		int n = toSort.size(); 
         	for (int i = 0; i < n-1; i++) 
-            	for (int j = 0; j < n-i-1; j++) 
-                	if ((toSort.get(j).getName().toLowerCase().compareTo(toSort.get(j+1).getName().toLowerCase())) > 0) 
-                	{ 
-				// swap j and j+1
-				Collections.swap(toSort, j,j+1);
-                	} 
+            		for (int j = 0; j < n-i-1; j++) 
+				if ((toSort.get(j).getName().toLowerCase().compareTo(toSort.get(j+1).getName().toLowerCase())) > 0) 
+				{ 
+					// swap j and j+1
+					Collections.swap(toSort, j,j+1);
+				} 
     } 
 }
