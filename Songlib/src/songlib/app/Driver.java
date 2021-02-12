@@ -1,4 +1,4 @@
-package songlib;
+package songlib.app;
 import java.util.*;
 
 public class Driver {
@@ -38,6 +38,8 @@ public class Driver {
 						
 			songList.add(tempSong);
 		}
+		
+		myObj.close();
 			
 		newSong.bubbleSort(songList);
 		
