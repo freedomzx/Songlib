@@ -1,16 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<!--
+/**
+*
+* @authors Brian Albert and Elijah Ongoco
+*/
+-->
+
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.Pane?>
 
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" 
-	fx:controller="songlib.view.Controller">
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.*?>
+
+<Pane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="songlib.view.Controller">
    <children>
-      <Button fx:id="addbtn" layoutX="51.0" layoutY="39.0" mnemonicParsing="false" text="Add" />
-      <Button fx:id="editbtn" layoutX="51.0" layoutY="93.0" mnemonicParsing="false" text="Edit" />
-      <Button fx:id="deletebtn" layoutX="51.0" layoutY="147.0" mnemonicParsing="false" text="Delete" />
+      <Button fx:id="addbtn" layoutX="51.0" layoutY="39.0" text="Add" onAction="#add"/>
+      <Button fx:id="editbtn" layoutX="51.0" layoutY="93.0" text="Edit"/>
+      <Button fx:id="deletebtn" layoutX="51.0" layoutY="147.0" text="Delete" />
       <TextField fx:id="nametext" layoutX="151.0" layoutY="39.0" promptText="Song Name" />
       <TextField fx:id="artisttext" layoutX="151.0" layoutY="93.0" promptText="Artist" />
       <TextField fx:id="yeartext" layoutX="151.0" layoutY="147.0" promptText="Year" />

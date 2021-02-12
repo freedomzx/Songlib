@@ -1,5 +1,10 @@
-package songlib.app;
+package songlib.view;
 import java.util.*;
+
+/**
+*
+* @authors Brian Albert and Elijah Ongoco
+*/
 
 public class Driver {
 	

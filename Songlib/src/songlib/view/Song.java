@@ -1,4 +1,4 @@
-package songlib.app;
+package songlib.view;
 
 import java.util.Collections;
 import java.util.List;
