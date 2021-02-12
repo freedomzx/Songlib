@@ -62,7 +62,7 @@ public class Song {
 	}
 	
 	// Takes in a list of songs and sorts the list alphabetically by the song's name
-	public void bubbleSort(List<Song> toSort) 
+	public static void bubbleSort(List<Song> toSort) 
     	{ 
 		int n = toSort.size(); 
         	for (int i = 0; i < n-1; i++) 

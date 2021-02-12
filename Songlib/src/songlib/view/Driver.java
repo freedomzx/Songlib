@@ -46,7 +46,7 @@ public class Driver {
 		
 		myObj.close();
 			
-		newSong.bubbleSort(songList);
+		Song.bubbleSort(songList);
 		
 		
 		for (int i = 0; i < songList.size(); i++) {

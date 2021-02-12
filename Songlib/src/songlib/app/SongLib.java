@@ -10,14 +10,21 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+import songlib.view.Controller;
 
 public class SongLib extends Application{
 	
 	@Override
 	public void start(Stage primaryStage) throws Exception{
+		//get fxml from songlib.view.songlib.fxml
 		FXMLLoader loader = new FXMLLoader();
 		loader.setLocation(getClass().getResource("/songlib/view/songlib.fxml"));
 		Pane root = loader.load();
+		
+		//initialize list of songs
+		Controller listController = loader.getController();
+		listController.initializeListView();
+		
 		Scene scene = new Scene(root);
 		primaryStage.setScene(scene);
 		primaryStage.setTitle("Songlib");
