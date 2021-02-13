@@ -70,6 +70,11 @@ public class Controller {
 				System.out.println("ERROR: " + toAdd.getYear() + " is not a valid year.");
 				return;
 			}
+			int yr = Integer.parseInt(toAdd.getYear());
+			if(yr < 0) {
+				System.out.println("ERROR: Invalid year number.");
+				return;
+			}
 		}
 		
 		//add to obslist, have to check if that song is there already
@@ -92,7 +97,7 @@ public class Controller {
 		songlist.setItems(obsList);
 		
 		//need to add it to the file now for persistance
-		FileWriter csvWriter = new FileWriter(".\\list.csv", true);
+		FileWriter csvWriter = new FileWriter("src\\list.txt", true);
 //		csvWriter.append("Name");
 //		csvWriter.append(",");
 //		csvWriter.append("Artist");
@@ -110,7 +115,7 @@ public class Controller {
 		if(!toAdd.getAlbum().isEmpty()) songDataList.add(toAdd.getAlbum());
 		if(!toAdd.getYear().isEmpty()) songDataList.add(toAdd.getYear());
 		
-		csvWriter.append(String.join(",", songDataList));
+		csvWriter.append(String.join("|", songDataList));
 		csvWriter.append("\n");
 		csvWriter.flush();
 		csvWriter.close();
