@@ -21,9 +21,9 @@ public class SongLib extends Application{
 		loader.setLocation(getClass().getResource("/songlib/view/songlib.fxml"));
 		Pane root = loader.load();
 		
-		//initialize list of songs
+		//initialize app and controller
 		Controller listController = loader.getController();
-		listController.initializeListView();
+		listController.initializeListView(primaryStage);
 		
 		Scene scene = new Scene(root);
 		primaryStage.setScene(scene);

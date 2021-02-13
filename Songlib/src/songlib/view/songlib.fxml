@@ -20,12 +20,12 @@
 <Pane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="songlib.view.Controller">
    <children>
       <Button fx:id="addbtn" layoutX="51.0" layoutY="39.0" text="Add" onAction="#add"/>
-      <Button fx:id="editbtn" layoutX="51.0" layoutY="93.0" text="Edit"/>
-      <Button fx:id="deletebtn" layoutX="51.0" layoutY="147.0" text="Delete" />
+      <Button fx:id="editbtn" layoutX="51.0" layoutY="93.0" text="Edit" onAction="#edit"/>
+      <Button fx:id="deletebtn" layoutX="51.0" layoutY="147.0" text="Delete" onAction="#delete"/>
       <TextField fx:id="nametext" layoutX="151.0" layoutY="39.0" promptText="Song Name" />
       <TextField fx:id="artisttext" layoutX="151.0" layoutY="93.0" promptText="Artist" />
-      <TextField fx:id="albumtext" layoutX="151.0" layoutY="200.0" promptText="Album" />
-      <TextField fx:id="yeartext" layoutX="151.0" layoutY="147.0" promptText="Year" />
+      <TextField fx:id="albumtext" layoutX="151.0" layoutY="147.0" promptText="Album" />
+      <TextField fx:id="yeartext" layoutX="151.0" layoutY="200.0" promptText="Year" />
       <ListView fx:id="songlist" layoutX="328.0" layoutY="13.0" prefHeight="365.0" prefWidth="245.0" />
    </children>
 </Pane>
