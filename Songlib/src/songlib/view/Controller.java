@@ -44,7 +44,7 @@ public class Controller {
 	Stage primaryStage;
 	
 	public void initializeListView(Stage mainStage) throws IOException {
-		//put code here to read from file and fill in the 2 arraylists
+		// Read in file and fill arrays
 		primaryStage = mainStage;
 		BufferedReader bsvReader = new BufferedReader(new FileReader("src\\list.txt"));
 		String row;
@@ -53,8 +53,6 @@ public class Controller {
 			Song newSong = new Song(songData[0], songData[1], songData[2], songData[3]);
 			listOfSongs.add(newSong);
 			String songStr = songData[0] + " | " + songData[1];
-			if(!songData[2].isEmpty()) songStr += " | " + songData[2];
-			if(!songData[3].isEmpty()) songStr += " | " + songData[3];
 			songNames.add(songStr);
 		}
 		bsvReader.close();
@@ -64,6 +62,7 @@ public class Controller {
 		//update the listview
 		obsList = FXCollections.observableArrayList(songNames);
 		songlist.setItems(obsList);
+		
 		//select first song if it exists
 		if(songNames.size() > 0) {
 			songlist.getSelectionModel().select(0);
@@ -81,10 +80,12 @@ public class Controller {
 
 	
 	public void add(ActionEvent e) throws IOException {
-		Song toAdd = new Song(nametext.getText(), artisttext.getText(), albumtext.getText(), yeartext.getText());
+		String addName = nametext.getText().trim();
+		String addArtist = artisttext.getText().trim();
+		String addAlbum = albumtext.getText().trim();
+		String addYear = yeartext.getText().trim();
 		
-//		System.out.println(toAdd.getName() + " " + toAdd.getArtist() + " " + 
-//				toAdd.getAlbum() + " " + toAdd.getYear());
+		Song toAdd = new Song(addName, addArtist, addAlbum, addYear);
 		
 		//only name and artist are required, check if missing either of them
 		if(toAdd.getName().isEmpty() || toAdd.getArtist().isEmpty()) {
@@ -125,62 +126,210 @@ public class Controller {
 		for(Song song : listOfSongs) {
 			if(toAdd.getName().toLowerCase().equals(song.getName().toLowerCase()) && 
 					toAdd.getArtist().toLowerCase().equals(song.getArtist().toLowerCase())) {
-				showAlert(primaryStage, "Song by artist already exists", "Song add error");
+				showAlert(primaryStage, "Duplicate entry", "Song add error");
 				return;
 			}
 		}
+		
+		// Add new song to list of songs
 		listOfSongs.add(toAdd);
-		String songStr = "";
-		songStr += toAdd.getName() + " | " + toAdd.getArtist();
-		if(!toAdd.getAlbum().isEmpty()) songStr += " | " + toAdd.getAlbum();
-		if(!toAdd.getYear().isEmpty()) songStr += " | " + toAdd.getYear();
-		songNames.add(songStr);
 		Song.bubbleSort(listOfSongs);
-		Collections.sort(songNames, String.CASE_INSENSITIVE_ORDER);
-		obsList = FXCollections.observableArrayList(songNames);
-		songlist.setItems(obsList);
 		
-		//select newly added item
-		int index = -1;
-		for(int i = 0; i < songNames.size(); i++) {
-			if(songNames.get(i).equals(songStr)) {
-				index = i;
-				break;
-			}
+		// Write list to csv file
+		String toWrite = "";
+		String listString;
+		songNames.clear();
+		for(Song song : listOfSongs) {
+			toWrite += song.getName() + "|" + song.getArtist() + "|" + song.getAlbum()
+					+ "|" + song.getYear() + "\n";
+			
+			listString = "";
+			listString += song.getName() + " | " + song.getArtist();
+			songNames.add(listString);
 		}
-		songlist.getSelectionModel().select(index);
-		
-		//need to add it to the file now for persistance
+		new FileWriter("src\\list.txt", false).close();
 		FileWriter bsvWriter = new FileWriter("src\\list.txt", true);
-
-		List<String> songDataList = new ArrayList<String>();
-		songDataList.add(toAdd.getName());
-		songDataList.add(toAdd.getArtist());
-		if(!toAdd.getAlbum().isEmpty()) songDataList.add(toAdd.getAlbum());
-		else {
-			songDataList.add("");
-		}
-		if(!toAdd.getYear().isEmpty()) songDataList.add(toAdd.getYear());
-		else {
-			songDataList.add("");
-		}
-		
-		bsvWriter.append(String.join("|", songDataList));
-		bsvWriter.append("\n");
+		bsvWriter.append(toWrite);
 		bsvWriter.flush();
 		bsvWriter.close();
+		
+		// Get index of selected song
+		int index = 0;
+		int count = 0;
+		for(Song song : listOfSongs) {
+			if (song.getName().equalsIgnoreCase(addName) && song.getArtist().equalsIgnoreCase(addArtist)
+					&& song.getAlbum().equalsIgnoreCase(addAlbum) && song.getYear().equalsIgnoreCase(addYear)) {
+				index = count;
+			}
+			count++;
+		}
+	
+		//update the listview
+		obsList = FXCollections.observableArrayList(songNames);
+		songlist.setItems(obsList);
+		songlist.getSelectionModel().select(index);
+		
+		
 		
 		System.out.println("DEBUG: Add success");
 	}
 	
 	
-	public void edit(ActionEvent e) {
-		String str = songlist.getSelectionModel().getSelectedItem();
-		System.out.println(str);
+	public void edit(ActionEvent e) throws IOException {	
+		
+		// Get variables from form and remove leading and trailing spaces
+		String editName = nametext.getText().trim();
+		String editArtist = artisttext.getText().trim();
+		String editAlbum = albumtext.getText().trim();
+		String editYear = yeartext.getText().trim();
+		
+		// Check to see if any edits were made
+		if(editName.isEmpty() && editArtist.isEmpty() && editAlbum.isEmpty() && editYear.isEmpty()) {
+			//System.out.println("ERROR: Required fields not filled in.");
+			showAlert(primaryStage, "No edits made", "Field error");
+			return;
+		}
+		
+		// Validate characters in string
+		boolean noBar = true;
+		if(nametext.getText().indexOf('|') != -1 ||
+				artisttext.getText().indexOf('|') != -1) {
+			noBar = false;
+		}
+		if(!albumtext.getText().isEmpty()) {
+			if(albumtext.getText().indexOf('|') != -1) {
+				noBar = false;
+			}
+		}
+		if(!noBar) {
+			showAlert(primaryStage, "\"|\" is not a valid character", "Character error");
+			return;
+		}
+		if(!yeartext.getText().isEmpty()) {
+			if(!yeartext.getText().matches("-?(0|[1-9]\\d*)")) {
+				showAlert(primaryStage, "Invalid year input", "Year error");
+				return;
+			}
+			int yr = Integer.parseInt(yeartext.getText());
+			if(yr < 0) {
+				showAlert(primaryStage, "Negative year not allowed", "Year error");
+				return;
+			}
+		}
+		
+		// Get info of selected song
+		int index = songlist.getSelectionModel().getSelectedIndex();
+		
+		// Check to see if song with edit already exists
+		if (!editName.isEmpty() && editArtist.isEmpty()) {
+			for(Song song : listOfSongs) {
+				if(editName.toLowerCase().equals(song.getName().toLowerCase()) && 
+						listOfSongs.get(index).getArtist().toLowerCase().equals(song.getArtist().toLowerCase())) {
+					showAlert(primaryStage, "Edit makes this song a duplicate", "Song edit error");
+					return;
+				}
+			}
+		} else if (!editName.isEmpty() && !editArtist.isEmpty()) {
+			for(Song song : listOfSongs) {
+				if(editName.toLowerCase().equals(song.getName().toLowerCase()) && 
+						editArtist.toLowerCase().equals(song.getArtist().toLowerCase())) {
+					showAlert(primaryStage, "Edit makes this song a duplicate", "Song edit error");
+					return;
+				}
+			}
+		}
+		
+		String name = listOfSongs.get(index).getName();
+		String artist = listOfSongs.get(index).getArtist();
+		String album = listOfSongs.get(index).getAlbum();
+		String year = listOfSongs.get(index).getYear();
+		
+		// Make changes to selected song
+		if (!editArtist.isEmpty()) {
+			artist = editArtist;
+			listOfSongs.get(index).setArtist(editArtist);
+		} else if (!editAlbum.isEmpty()) {
+			album = editAlbum;
+			listOfSongs.get(index).setAlbum(editAlbum);
+		} else if (!editYear.isEmpty()) {
+			year = editYear;
+			listOfSongs.get(index).setYear(editYear);
+		} else if (!editName.isEmpty()) {
+			name = editName;
+			listOfSongs.get(index).setName(editName);
+			Song.bubbleSort(listOfSongs);
+		}
+		
+		// Write list to csv file
+		String toWrite = "";
+		String listString;
+		songNames.clear();
+		for(Song song : listOfSongs) {
+			toWrite += song.getName() + "|" + song.getArtist() + "|" + song.getAlbum()
+					+ "|" + song.getYear() + "\n";
+			
+			listString = "";
+			listString += song.getName() + " | " + song.getArtist();
+			songNames.add(listString);
+		}
+		new FileWriter("src\\list.txt", false).close();
+		FileWriter bsvWriter = new FileWriter("src\\list.txt", true);
+		bsvWriter.append(toWrite);
+		bsvWriter.flush();
+		bsvWriter.close();
+		
+		// Find the index that should be used
+		if (!editName.isEmpty()) {
+			int count = 0;
+			for (Song song : listOfSongs) {
+				if (song.getName().equalsIgnoreCase(name) && song.getArtist().equalsIgnoreCase(artist)
+						&& song.getAlbum().equalsIgnoreCase(album) && song.getYear().equalsIgnoreCase(year)) {
+					index = count;
+				}
+				count++;
+			}			
+		}
+	
+		//update the listview
+		obsList = FXCollections.observableArrayList(songNames);
+		songlist.setItems(obsList);
+		songlist.getSelectionModel().select(index);
+		
 	}
 	
-	public void delete(ActionEvent e) {
+	public void delete(ActionEvent e) throws IOException {
+		// Get index of selected song
+		int index = songlist.getSelectionModel().getSelectedIndex();
 		
+		// Remove selected song
+		listOfSongs.remove(index);
+		
+		// Write list to csv file
+		String toWrite = "";
+		String listString;
+		songNames.clear();
+		for(Song song : listOfSongs) {
+			toWrite += song.getName() + "|" + song.getArtist() + "|" + song.getAlbum()
+					+ "|" + song.getYear() + "\n";
+			
+			listString = "";
+			listString += song.getName() + " | " + song.getArtist();
+			songNames.add(listString);
+		}
+		new FileWriter("src\\list.txt", false).close();
+		FileWriter bsvWriter = new FileWriter("src\\list.txt", true);
+		bsvWriter.append(toWrite);
+		bsvWriter.flush();
+		bsvWriter.close();
+		
+		if (listOfSongs.size() <= index) {
+			index--;
+		}
+	
+		// Update the listview
+		obsList = FXCollections.observableArrayList(songNames);
+		songlist.setItems(obsList);
+		songlist.getSelectionModel().select(index);
 	}
 	
 	
