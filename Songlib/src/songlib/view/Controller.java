@@ -300,6 +300,10 @@ public class Controller {
 	public void delete(ActionEvent e) throws IOException {
 		// Get index of selected song
 		int index = songlist.getSelectionModel().getSelectedIndex();
+		if(index == -1) {
+			showAlert(primaryStage, "No song selected", "Delete error");
+			return;
+		}
 		
 		// Remove selected song
 		listOfSongs.remove(index);
