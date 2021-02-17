@@ -15,50 +15,50 @@ public class Song {
 	
 	// Constructor
 	public Song(String initialName, String initialArtist, String initialAlbum, String initialYear) {
-		name = initialName;
-		artist = initialArtist;
-		album = initialAlbum;
-		year = initialYear;
+		this.name = initialName;
+		this.artist = initialArtist;
+		this.album = initialAlbum;
+		this.year = initialYear;
 	}
 	
 	// SetName method accepts an argument which is stored in the name field
 	public void setName(String newName){
-        	name = newName;
-    	}
+		this.name = newName;
+	}
 	
 	// SetName method accepts an argument which is stored in the name field
 	public void setArtist(String newArtist){
-        	artist = newArtist;
-    	}
+		this.artist = newArtist;
+	}
 	
 	// setAlbum method accepts an argument which is stored in the album field
 	public void setAlbum(String newAlbum){
-        	artist = newAlbum;
-    	}
+		this.album = newAlbum;
+	}
 	
 	// setYear method accepts an argument which is stored in the year field
 	public void setYear(String newYear){
-        	year = newYear;
-    	}
+		this.year = newYear;
+	}
 	
 	// Returns the value stored in the name field
 	public String getName(){
-		return name;
+		return this.name;
 	}
 	
 	// Returns the value stored in the name field
 	public String getArtist(){
-		return artist;
+		return this.artist;
 	}
 	
 	// Returns the value stored in the name field
 	public String getAlbum(){
-		return album;
+		return this.album;
 	}
 	
 	// Returns the value stored in the name field
 	public String getYear(){
-		return year;
+		return this.year;
 	}
 	
 	// Takes in a list of songs and sorts the list alphabetically by the song's name
@@ -73,4 +73,8 @@ public class Song {
 					Collections.swap(toSort, j,j+1);
 				} 
     } 
+	
+	public String toString() {
+		return this.getName() + " | " + this.getArtist() + " | " + this.getAlbum() + " | " + this.getYear();
+	}
 }

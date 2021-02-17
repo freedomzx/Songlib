@@ -190,6 +190,11 @@ public class Controller {
 			return;
 		}
 		
+		if(editName.isEmpty() || editArtist.isEmpty()) {
+			showAlert(primaryStage, "Every song needs an artist and name at the least", "Field error");
+			return;
+		}
+		
 		// Validate characters in string
 		boolean noBar = true;
 		if(nametext.getText().indexOf('|') != -1 ||
@@ -217,84 +222,62 @@ public class Controller {
 			}
 		}
 		
-		// Get info of selected song
+		// Get index of selected song
 		int index = songlist.getSelectionModel().getSelectedIndex();
 		
 		// Check to see if song with edit already exists
-		if (!editName.isEmpty() && editArtist.isEmpty()) {
-			for(Song song : listOfSongs) {
-				if(editName.toLowerCase().equals(song.getName().toLowerCase()) && 
-						listOfSongs.get(index).getArtist().toLowerCase().equals(song.getArtist().toLowerCase())) {
-					showAlert(primaryStage, "Edit makes this song a duplicate", "Song edit error");
-					return;
-				}
-			}
-		} else if (!editName.isEmpty() && !editArtist.isEmpty()) {
-			for(Song song : listOfSongs) {
-				if(editName.toLowerCase().equals(song.getName().toLowerCase()) && 
-						editArtist.toLowerCase().equals(song.getArtist().toLowerCase())) {
-					showAlert(primaryStage, "Edit makes this song a duplicate", "Song edit error");
-					return;
-				}
+		for(int i = 0; i < listOfSongs.size(); i++) {
+			Song song = listOfSongs.get(i);
+			if(i == index) continue;
+			else if(song.getName().toLowerCase().equals(editName.toLowerCase()) && 
+					song.getArtist().toLowerCase().equals(editArtist.toLowerCase())) {
+				showAlert(primaryStage, "Edit makes this song a duplicate", "Song edit error");
+				return;
 			}
 		}
 		
-		String name = listOfSongs.get(index).getName();
-		String artist = listOfSongs.get(index).getArtist();
-		String album = listOfSongs.get(index).getAlbum();
-		String year = listOfSongs.get(index).getYear();
-		
-		// Make changes to selected song
-		if (!editArtist.isEmpty()) {
-			artist = editArtist;
-			listOfSongs.get(index).setArtist(editArtist);
-		} else if (!editAlbum.isEmpty()) {
-			album = editAlbum;
-			listOfSongs.get(index).setAlbum(editAlbum);
-		} else if (!editYear.isEmpty()) {
-			year = editYear;
-			listOfSongs.get(index).setYear(editYear);
-		} else if (!editName.isEmpty()) {
-			name = editName;
-			listOfSongs.get(index).setName(editName);
-			Song.bubbleSort(listOfSongs);
+		//Update song in listOfSongs
+		for(int i = 0; i < listOfSongs.size(); i++) {
+			if(i == index) {
+				listOfSongs.get(i).setName(editName);
+				listOfSongs.get(i).setArtist(editArtist);
+				listOfSongs.get(i).setAlbum(editAlbum);
+				listOfSongs.get(i).setYear(editYear);
+				break;
+			}
 		}
+		Song.bubbleSort(listOfSongs);
 		
-		// Write list to csv file
 		String toWrite = "";
 		String listString;
 		songNames.clear();
 		for(Song song : listOfSongs) {
 			toWrite += song.getName() + "|" + song.getArtist() + "|" + song.getAlbum()
-					+ "|" + song.getYear() + "\n";
+			+ "|" + song.getYear() + "\n";
 			
 			listString = "";
 			listString += song.getName() + " | " + song.getArtist();
 			songNames.add(listString);
 		}
+		Collections.sort(songNames, String.CASE_INSENSITIVE_ORDER);
 		new FileWriter("src\\list.txt", false).close();
 		FileWriter bsvWriter = new FileWriter("src\\list.txt", true);
 		bsvWriter.append(toWrite);
 		bsvWriter.flush();
 		bsvWriter.close();
 		
-		// Find the index that should be used
-		if (!editName.isEmpty()) {
-			int count = 0;
-			for (Song song : listOfSongs) {
-				if (song.getName().equalsIgnoreCase(name) && song.getArtist().equalsIgnoreCase(artist)
-						&& song.getAlbum().equalsIgnoreCase(album) && song.getYear().equalsIgnoreCase(year)) {
-					index = count;
-				}
-				count++;
-			}			
-		}
 	
 		//update the listview
 		obsList = FXCollections.observableArrayList(songNames);
 		songlist.setItems(obsList);
+		for(int i = 0; i < listOfSongs.size(); i++) {
+			if(editName.equalsIgnoreCase(listOfSongs.get(i).getName()) && 
+					editArtist.equalsIgnoreCase(listOfSongs.get(i).getArtist())) {
+				index = i;
+				break;
+			}
+		}
 		songlist.getSelectionModel().select(index);
-		
 	}
 	
 	public void delete(ActionEvent e) throws IOException {
@@ -336,6 +319,11 @@ public class Controller {
 		songlist.getSelectionModel().select(index);
 	}
 	
-	
+	//method for debugging, just pritns songs
+	private static void printSongs() {
+		for(Song song : listOfSongs) {
+			System.out.println(song.toString());
+		}
+	}
 	
 }
