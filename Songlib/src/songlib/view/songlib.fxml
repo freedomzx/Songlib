@@ -8,24 +8,31 @@
 -->
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.Pane?>
-
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.text.*?>
-<?import javafx.geometry.*?>
+<?import javafx.scene.text.Text?>
 
 <Pane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="songlib.view.Controller">
    <children>
-      <Button fx:id="addbtn" layoutX="51.0" layoutY="39.0" text="Add" onAction="#add"/>
-      <Button fx:id="editbtn" layoutX="51.0" layoutY="93.0" text="Edit" onAction="#edit"/>
-      <Button fx:id="deletebtn" layoutX="51.0" layoutY="147.0" text="Delete" onAction="#delete"/>
-      <TextField fx:id="nametext" layoutX="151.0" layoutY="39.0" promptText="Song Name" />
-      <TextField fx:id="artisttext" layoutX="151.0" layoutY="93.0" promptText="Artist" />
-      <TextField fx:id="albumtext" layoutX="151.0" layoutY="147.0" promptText="Album" />
-      <TextField fx:id="yeartext" layoutX="151.0" layoutY="200.0" promptText="Year" />
-      <ListView fx:id="songlist" layoutX="328.0" layoutY="13.0" prefHeight="365.0" prefWidth="245.0" />
+      <Button fx:id="addbtn" layoutX="72.0" layoutY="241.0" onAction="#add" text="Add" />
+      <Button fx:id="editbtn" layoutX="72.0" layoutY="275.0" onAction="#edit" text="Edit" />
+      <Button fx:id="deletebtn" layoutX="65.0" layoutY="306.0" onAction="#delete" text="Delete" />
+      <TextField fx:id="nametext" layoutX="151.0" layoutY="217.0" promptText="Song Name" />
+      <TextField fx:id="artisttext" layoutX="151.0" layoutY="253.0" promptText="Artist" />
+      <TextField fx:id="albumtext" layoutX="151.0" layoutY="287.0" promptText="Album" />
+      <TextField fx:id="yeartext" layoutX="151.0" layoutY="318.0" promptText="Year" />
+      <ListView fx:id="songlist" layoutX="328.0" layoutY="13.0" prefHeight="365.0" prefWidth="245.0" onMouseClicked="#updateDetails"/>
+      <Text layoutX="108.0" layoutY="52.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Song Details:" />
+      <Text layoutX="62.0" layoutY="90.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Name:" />
+      <Text layoutX="62.0" layoutY="121.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Artist:" />
+      <Text layoutX="62.0" layoutY="149.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Album:" />
+      <Text layoutX="62.0" layoutY="181.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Year:" />
+      <Text layoutX="159.0" layoutY="121.0" strokeType="OUTSIDE" strokeWidth="0.0" />
+      <Label fx:id="nameLabel" layoutX="160.0" layoutY="77.0" text="" />
+      <Label fx:id="artistLabel" layoutX="161.0" layoutY="108.0" text="" />
+      <Label fx:id="albumLabel" layoutX="161.0" layoutY="136.0" text="" />
+      <Label fx:id="yearLabel" layoutX="161.0" layoutY="168.0" text="" />
    </children>
 </Pane>
