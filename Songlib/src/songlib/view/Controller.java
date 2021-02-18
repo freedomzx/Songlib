@@ -303,7 +303,7 @@ public class Controller {
 			listString += song.getName() + " | " + song.getArtist();
 			songNames.add(listString);
 		}
-		//Collections.sort(songNames, String.CASE_INSENSITIVE_ORDER);
+		Collections.sort(songNames, String.CASE_INSENSITIVE_ORDER);
 		new FileWriter("src\\list.txt", false).close();
 		FileWriter bsvWriter = new FileWriter("src\\list.txt", true);
 		bsvWriter.append(toWrite);
