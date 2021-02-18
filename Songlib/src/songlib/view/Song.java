@@ -70,7 +70,7 @@ public class Song {
         			System.out.println("Name 1: " + toSort.get(j).getName());
         			System.out.println("Artist 1: " + toSort.get(j).getArtist());
         			System.out.println("Name 2: " + toSort.get(j+1).getName());
-        			System.out.println("Artist 2: " + toSort.get(j).getArtist());
+        			System.out.println("Artist 2: " + toSort.get(j+1).getArtist());
 					if ((toSort.get(j).getName().toLowerCase().compareTo(toSort.get(j+1).getName().toLowerCase())) > 0) 
 					{ 
 						// swap j and j+1
