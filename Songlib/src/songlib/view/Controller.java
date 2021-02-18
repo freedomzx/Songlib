@@ -10,6 +10,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ListView;
+import javafx.scene.control.Label;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Alert;
@@ -37,6 +38,10 @@ public class Controller {
 	@FXML TextField albumtext;
 	@FXML TextField yeartext;
 	@FXML ListView<String> songlist;
+	@FXML Label nameLabel;
+	@FXML Label artistLabel;
+	@FXML Label albumLabel;
+	@FXML Label yearLabel;
 	
 	private ObservableList<String> obsList;
 	static List<Song> listOfSongs = new ArrayList<Song>();
@@ -66,6 +71,10 @@ public class Controller {
 		//select first song if it exists
 		if(songNames.size() > 0) {
 			songlist.getSelectionModel().select(0);
+			nameLabel.setText(listOfSongs.get(0).getName());
+			artistLabel.setText(listOfSongs.get(0).getArtist());
+			albumLabel.setText(listOfSongs.get(0).getAlbum());
+			yearLabel.setText(listOfSongs.get(0).getYear());
 		}
 	}
 	
@@ -169,7 +178,17 @@ public class Controller {
 		songlist.setItems(obsList);
 		songlist.getSelectionModel().select(index);
 		
+		// Update details
+		nameLabel.setText(listOfSongs.get(index).getName());
+		artistLabel.setText(listOfSongs.get(index).getArtist());
+		albumLabel.setText(listOfSongs.get(index).getAlbum());
+		yearLabel.setText(listOfSongs.get(index).getYear());
 		
+		// Clear Text Field
+		nametext.clear();
+		artisttext.clear();
+		albumtext.clear();
+		yeartext.clear();
 		
 		System.out.println("DEBUG: Add success");
 	}
@@ -177,11 +196,24 @@ public class Controller {
 	
 	public void edit(ActionEvent e) throws IOException {	
 		
+		// Get index of selected song
+		int index = songlist.getSelectionModel().getSelectedIndex();
+		if(index == -1) {
+			showAlert(primaryStage, "No song selected", "Edit error");
+			return;
+		}
+		
 		// Get variables from form and remove leading and trailing spaces
 		String editName = nametext.getText().trim();
 		String editArtist = artisttext.getText().trim();
 		String editAlbum = albumtext.getText().trim();
 		String editYear = yeartext.getText().trim();
+		
+		// Get variables from the selected song
+		String name = listOfSongs.get(index).getName();
+		String artist = listOfSongs.get(index).getArtist();
+		String album = listOfSongs.get(index).getAlbum();
+		String year = listOfSongs.get(index).getYear();
 		
 		// Check to see if any edits were made
 		if(editName.isEmpty() && editArtist.isEmpty() && editAlbum.isEmpty() && editYear.isEmpty()) {
@@ -190,10 +222,6 @@ public class Controller {
 			return;
 		}
 		
-		if(editName.isEmpty() || editArtist.isEmpty()) {
-			showAlert(primaryStage, "Every song needs an artist and name at the least", "Field error");
-			return;
-		}
 		
 		// Validate characters in string
 		boolean noBar = true;
@@ -222,29 +250,45 @@ public class Controller {
 			}
 		}
 		
-		// Get index of selected song
-		int index = songlist.getSelectionModel().getSelectedIndex();
-		
 		// Check to see if song with edit already exists
-		for(int i = 0; i < listOfSongs.size(); i++) {
-			Song song = listOfSongs.get(i);
-			if(i == index) continue;
-			else if(song.getName().toLowerCase().equals(editName.toLowerCase()) && 
-					song.getArtist().toLowerCase().equals(editArtist.toLowerCase())) {
-				showAlert(primaryStage, "Edit makes this song a duplicate", "Song edit error");
-				return;
+		if (!editName.isEmpty() && editArtist.isEmpty()) { // Case 1: editing name but not artist
+			for(Song song : listOfSongs) {
+				if(editName.toLowerCase().equals(song.getName().toLowerCase()) && 
+						name.equals(song.getArtist().toLowerCase())) {
+					showAlert(primaryStage, "Edit makes this song a duplicate", "Song edit error");
+					return;
+				}
+			}
+		} else if (!editName.isEmpty() && !editArtist.isEmpty()) { // Case 2: editing name and artist
+			for(Song song : listOfSongs) {
+				if(editName.toLowerCase().equals(song.getName().toLowerCase()) && 
+						editArtist.toLowerCase().equals(song.getArtist().toLowerCase()) && song != listOfSongs.get(index) ) {
+					showAlert(primaryStage, "Edit makes this song a duplicate", "Song edit error");
+					return;
+				}
+			}
+		} else if (editName.isEmpty() && !editArtist.isEmpty()) { // Case 3: editing artist but not name
+			for(Song song : listOfSongs) {
+				if(name.toLowerCase().equals(song.getName().toLowerCase()) && 
+						editArtist.toLowerCase().equals(song.getArtist().toLowerCase()) && song != listOfSongs.get(index) ) {
+					showAlert(primaryStage, "Edit makes this song a duplicate", "Song edit error");
+					return;
+				}
 			}
 		}
 		
-		//Update song in listOfSongs
-		for(int i = 0; i < listOfSongs.size(); i++) {
-			if(i == index) {
-				listOfSongs.get(i).setName(editName);
-				listOfSongs.get(i).setArtist(editArtist);
-				listOfSongs.get(i).setAlbum(editAlbum);
-				listOfSongs.get(i).setYear(editYear);
-				break;
-			}
+		// Make changes to selected song
+		if (!editName.isEmpty()) {
+			listOfSongs.get(index).setName(editName);
+		}
+		if (!editArtist.isEmpty()) {
+			listOfSongs.get(index).setArtist(editArtist);
+		}
+		if (!editAlbum.isEmpty()) {
+			listOfSongs.get(index).setAlbum(editAlbum);
+		} 
+		if (!editYear.isEmpty()) {
+			listOfSongs.get(index).setYear(editYear);
 		}
 		Song.bubbleSort(listOfSongs);
 		
@@ -259,7 +303,7 @@ public class Controller {
 			listString += song.getName() + " | " + song.getArtist();
 			songNames.add(listString);
 		}
-		Collections.sort(songNames, String.CASE_INSENSITIVE_ORDER);
+		//Collections.sort(songNames, String.CASE_INSENSITIVE_ORDER);
 		new FileWriter("src\\list.txt", false).close();
 		FileWriter bsvWriter = new FileWriter("src\\list.txt", true);
 		bsvWriter.append(toWrite);
@@ -270,14 +314,47 @@ public class Controller {
 		//update the listview
 		obsList = FXCollections.observableArrayList(songNames);
 		songlist.setItems(obsList);
-		for(int i = 0; i < listOfSongs.size(); i++) {
-			if(editName.equalsIgnoreCase(listOfSongs.get(i).getName()) && 
-					editArtist.equalsIgnoreCase(listOfSongs.get(i).getArtist())) {
-				index = i;
-				break;
+		
+		// Get the index of new song
+		if (!editName.isEmpty() && editArtist.isEmpty()) { // Case 1: editing name but not artist
+			for(int i = 0; i < listOfSongs.size(); i++) {
+				if(editName.equalsIgnoreCase(listOfSongs.get(i).getName()) && 
+						artist.equalsIgnoreCase(listOfSongs.get(i).getArtist())) {
+					index = i;
+					break;
+				}
+			}
+		} else if (!editName.isEmpty() && !editArtist.isEmpty()) { // Case 2: editing name and artist
+			for(int i = 0; i < listOfSongs.size(); i++) {
+				if(editName.equalsIgnoreCase(listOfSongs.get(i).getName()) && 
+						editArtist.equalsIgnoreCase(listOfSongs.get(i).getArtist())) {
+					index = i;
+					break;
+				}
+			}
+		} else if (editName.isEmpty() && !editArtist.isEmpty()) { // Case 3: editing artist but not name
+			for(int i = 0; i < listOfSongs.size(); i++) {
+				if(name.equalsIgnoreCase(listOfSongs.get(i).getName()) && 
+						editArtist.equalsIgnoreCase(listOfSongs.get(i).getArtist())) {
+					System.out.println("Index = " + i);
+					index = i;
+					break;
+				}
 			}
 		}
 		songlist.getSelectionModel().select(index);
+		
+		// Update details
+		nameLabel.setText(listOfSongs.get(index).getName());
+		artistLabel.setText(listOfSongs.get(index).getArtist());
+		albumLabel.setText(listOfSongs.get(index).getAlbum());
+		yearLabel.setText(listOfSongs.get(index).getYear());
+		
+		// Clear Text Field
+		nametext.clear();
+		artisttext.clear();
+		albumtext.clear();
+		yeartext.clear();
 	}
 	
 	public void delete(ActionEvent e) throws IOException {
@@ -317,9 +394,35 @@ public class Controller {
 		obsList = FXCollections.observableArrayList(songNames);
 		songlist.setItems(obsList);
 		songlist.getSelectionModel().select(index);
+				
+		// If list is now empty show no details
+		if(obsList.size() == 0) {
+			nameLabel.setText("");
+			artistLabel.setText("");
+			albumLabel.setText("");
+			yearLabel.setText("");
+		} else { 
+			// Update details
+			nameLabel.setText(listOfSongs.get(index).getName());
+			artistLabel.setText(listOfSongs.get(index).getArtist());
+			albumLabel.setText(listOfSongs.get(index).getAlbum());
+			yearLabel.setText(listOfSongs.get(index).getYear());
+		}
 	}
 	
-	//method for debugging, just pritns songs
+	// Update the details of the song when the list is changed
+	public void updateDetails(){
+		// Get index of selected song
+		int index = songlist.getSelectionModel().getSelectedIndex();
+		
+		// Update details
+		nameLabel.setText(listOfSongs.get(index).getName());
+		artistLabel.setText(listOfSongs.get(index).getArtist());
+		albumLabel.setText(listOfSongs.get(index).getAlbum());
+		yearLabel.setText(listOfSongs.get(index).getYear());
+	}
+	
+	//method for debugging, just prints songs
 	private static void printSongs() {
 		for(Song song : listOfSongs) {
 			System.out.println(song.toString());
