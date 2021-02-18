@@ -63,15 +63,28 @@ public class Song {
 	
 	// Takes in a list of songs and sorts the list alphabetically by the song's name
 	public static void bubbleSort(List<Song> toSort) 
-    	{ 
+    { 
 		int n = toSort.size(); 
-        	for (int i = 0; i < n-1; i++) 
-            		for (int j = 0; j < n-i-1; j++) 
-				if ((toSort.get(j).getName().toLowerCase().compareTo(toSort.get(j+1).getName().toLowerCase())) > 0) 
-				{ 
-					// swap j and j+1
-					Collections.swap(toSort, j,j+1);
-				} 
+    	for (int i = 0; i < n-1; i++) {
+        		for (int j = 0; j < n-i-1; j++) {
+        			System.out.println("Name 1: " + toSort.get(j).getName());
+        			System.out.println("Artist 1: " + toSort.get(j).getArtist());
+        			System.out.println("Name 2: " + toSort.get(j+1).getName());
+        			System.out.println("Artist 2: " + toSort.get(j).getArtist());
+					if ((toSort.get(j).getName().toLowerCase().compareTo(toSort.get(j+1).getName().toLowerCase())) > 0) 
+					{ 
+						// swap j and j+1
+						Collections.swap(toSort, j,j+1);
+					} else if ((toSort.get(j).getName().toLowerCase().compareTo(toSort.get(j+1).getName().toLowerCase())) == 0) {
+						if ((toSort.get(j).getAlbum().toLowerCase().compareTo(toSort.get(j+1).getAlbum().toLowerCase())) > 0) 
+						{ 
+							// swap j and j+1
+							Collections.swap(toSort, j,j+1);
+							System.out.println("HERE");
+						}
+					}
+        		}
+    	}
     } 
 	
 	public String toString() {
