@@ -190,7 +190,7 @@ public class Controller {
 		albumtext.clear();
 		yeartext.clear();
 		
-		System.out.println("DEBUG: Add success");
+		//System.out.println("DEBUG: Add success");
 	}
 	
 	
@@ -414,6 +414,8 @@ public class Controller {
 	public void updateDetails(){
 		// Get index of selected song
 		int index = songlist.getSelectionModel().getSelectedIndex();
+		//if there's nothing in the list to select return to not have exception
+		if(index < 0) return;
 		
 		// Update details
 		nameLabel.setText(listOfSongs.get(index).getName());
